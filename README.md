@@ -1,5 +1,5 @@
-# BtPrinter
-this is a simple bluetooth printer project
+# whx
+修改后的打印图片二维码
 
-## update log
-##### 2015-7-14 add print bitmap support
+## 添加二维码生成和网络图片打印
+##### 2017/7/11 更新
