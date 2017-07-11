@@ -190,7 +190,7 @@ public class ZXingUtils {
         }
         int marginW = 20;//图片之间的距离
         int width = first.getWidth() + second.getWidth() + marginW;
-        int height = first.getHeight();
+        int height = first.getHeight();//需要添加高度的 first.getHeight() + second.getHeight()
         Bitmap newBitmap = Bitmap.createBitmap(
                 width,
                 height, Config.ARGB_4444);
