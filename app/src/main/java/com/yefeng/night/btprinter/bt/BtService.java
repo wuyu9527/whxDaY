@@ -43,7 +43,11 @@ public class BtService {
     // Name for the SDP record when creating server socket
     private static final String NAME = "BtService";
     // Unique UUID for this application
-    private static final UUID MY_UUID = UUID.fromString("0001101-0000-1000-8000-00805F9B34FB");
+    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    //00001101-0000-1000-8000-00805F9B34FB
+    //00001106-0000-1000-8000-00805F9B34FB
+    //00001111-0000-1000-8000-00805F9B34FB
+    //00001126-0000-1000-8000-00805F9B34FB
     // Member fields
     private final BluetoothAdapter mAdapter;
     private AcceptThread mAcceptThread;

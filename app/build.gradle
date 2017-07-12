@@ -39,4 +39,10 @@ dependencies {
     compile 'org.androidannotations:androidannotations-api:3.0.1'
     compile 'de.greenrobot:eventbus:2.2.1'
     compile 'com.google.zxing:core:3.3.0'
+
+//    compile 'org.xhtmlrenderer:flying-saucer-core:9.1.6'
+//    compile 'org.xhtmlrenderer:flying-saucer-pdf-itext5:9.1.6'
+    //compile 'org.apache.pdfbox:fontbox:2.0.6'
+//    compile 'com.itextpdf:itextpdf:5.5.11'
+    //compile 'org.apache.pdfbox:pdfbox:2.0.6'
 }

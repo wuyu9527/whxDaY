@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
+import android.os.Environment;
 import android.util.Log;
 
 import com.yefeng.night.btprinter.print.GPrinterCommand;
@@ -13,7 +14,15 @@ import com.yefeng.night.btprinter.print.PrintQueue;
 import com.yefeng.night.btprinter.print.PrintUtil;
 import com.yefeng.night.btprinter.util.ZXingUtils;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.PDFRenderer;
+
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -56,11 +65,34 @@ public class BtService extends IntentService {
         } else if (intent.getAction().equals(PrintUtil.ACTION_PRINT_BITMAP)) {
 
             printBitmapTest();
+//            String url = Environment.getExternalStorageDirectory().getPath();
+//            File file = new File(url + "/zgb.pdf");
+//            if (file.exists()) {
+//                Log.i("whx", "存在");
+//                byte[] bytes = getPDFBinary(file);
+//                ArrayList<byte[]> bytesList = new ArrayList<byte[]>();
+//                bytesList.add(bytes);
+//
+//                PrintQueue.getQueue(getApplicationContext()).add(bytesList);
+//            } else {
+//                Log.i("whx", "不存在");
+//            }
 
         } else if (intent.getAction().equals(PrintUtil.ACTION_PRINT_PAINTING)) {
             printPainting();
         }
     }
+
+
+    public Bitmap getBitmapFromByte(byte[] temp) {
+        if (temp != null) {
+            Bitmap bitmap = BitmapFactory.decodeByteArray(temp, 0, temp.length);
+            return bitmap;
+        } else {
+            return null;
+        }
+    }
+
 
     private void printTest() {
         try {
@@ -121,7 +153,7 @@ public class BtService extends IntentService {
 
     }
 
-   // String downUrl = "http://www.zgbang.com.cn/download/v2.0/zgbang.apk";
+    // String downUrl = "http://www.zgbang.com.cn/download/v2.0/zgbang.apk";
     String downUrl = "https://itunes.apple.com/cn/app/%E6%8E%8C%E6%9F%9C%E5%B8%AE-%E8%80%81%E6%9D%BF%E9%9A%8F%E8%BA%AB%E7%9A%84%E5%BA%97%E9%93%BA%E7%AE%A1%E5%AE%B6/id1119437282?mt=8";
 
     private void printBitmapTest() {
@@ -133,11 +165,11 @@ public class BtService extends IntentService {
             return;
         }
         //Bitmap bitmap = BitmapFactory.decodeStream(bis);
-        Bitmap bitmap1 = ZXingUtils.createQRImage(downUrl, 250, 250);
-        Bitmap bitmap2 = ZXingUtils.createQRImage(downUrl, 250, 250);
-        Bitmap bitmap4 = ZXingUtils.createQRImage(downUrl, 250, 250);
-        Bitmap bitmap3 = ZXingUtils.mixtureBitmap(bitmap1, bitmap2, new PointF(250, 0));
-        Bitmap bitmap = ZXingUtils.mixtureBitmap(bitmap4, bitmap3, new PointF(230, 0));
+        Bitmap bitmap1 = ZXingUtils.createQRImage(downUrl, 300, 300);
+        Bitmap bitmap2 = ZXingUtils.createQRImage(downUrl, 300, 300);
+        Bitmap bitmap4 = ZXingUtils.createQRImage(downUrl, 300, 300);
+        Bitmap bitmap3 = ZXingUtils.mixtureBitmap(bitmap1, bitmap2, new PointF(300, 0));
+        Bitmap bitmap = ZXingUtils.mixtureBitmap(bitmap4, bitmap3, new PointF(280, 0));
 //        Bitmap bitmap = ZXingUtils.createQRImage(downUrl, 250, 250);
         PrintPic printPic = PrintPic.getInstance();
         printPic.init(bitmap);//载入图片
@@ -159,6 +191,60 @@ public class BtService extends IntentService {
         printBytes.add(GPrinterCommand.print);
         //PrintQueue.getQueue(getApplicationContext()).add(bytes);
         PrintQueue.getQueue(getApplicationContext()).add(printBytes);
+    }
+
+
+    /**
+     * 将PDF转换成base64编码
+     * 1.使用BufferedInputStream和FileInputStream从File指定的文件中读取内容；
+     * 2.然后建立写入到ByteArrayOutputStream底层输出流对象的缓冲输出流BufferedOutputStream
+     * 3.底层输出流转换成字节数组，然后由BASE64Encoder的对象对流进行编码
+     */
+    static byte[] getPDFBinary(File file) {
+        FileInputStream fin = null;
+        BufferedInputStream bin = null;
+        ByteArrayOutputStream baos = null;
+        BufferedOutputStream bout = null;
+
+        try {
+            //建立读取文件的文件输出流
+            fin = new FileInputStream(file);
+            //在文件输出流上安装节点流（更大效率读取）
+            bin = new BufferedInputStream(fin);
+            // 创建一个新的 byte 数组输出流，它具有指定大小的缓冲区容量
+            baos = new ByteArrayOutputStream();
+            //创建一个新的缓冲输出流，以将数据写入指定的底层输出流
+            bout = new BufferedOutputStream(baos);
+            byte[] buffer = new byte[1024];
+            int len = bin.read(buffer);
+            while (len != -1) {
+                bout.write(buffer, 0, len);
+                len = bin.read(buffer);
+            }
+            //刷新此输出流并强制写出所有缓冲的输出字节，必须这行代码，否则有可能有问题
+            bout.flush();
+            byte[] bytes = baos.toByteArray();
+            //sun公司的API
+            //return encoder.encodeBuffer(bytes).trim();
+            //apache公司的API
+            //return Base64.encodeBase64String(bytes);
+            return bytes;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fin.close();
+                bin.close();
+                //关闭 ByteArrayOutputStream 无效。此类中的方法在关闭此流后仍可被调用，而不会产生任何 IOException
+                //baos.close();
+                bout.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     /**
