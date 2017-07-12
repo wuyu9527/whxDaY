@@ -165,11 +165,11 @@ public class BtService extends IntentService {
             return;
         }
         //Bitmap bitmap = BitmapFactory.decodeStream(bis);
-        Bitmap bitmap1 = ZXingUtils.createQRImage(downUrl, 300, 300);
-        Bitmap bitmap2 = ZXingUtils.createQRImage(downUrl, 300, 300);
-        Bitmap bitmap4 = ZXingUtils.createQRImage(downUrl, 300, 300);
-        Bitmap bitmap3 = ZXingUtils.mixtureBitmap(bitmap1, bitmap2, new PointF(300, 0));
-        Bitmap bitmap = ZXingUtils.mixtureBitmap(bitmap4, bitmap3, new PointF(280, 0));
+        Bitmap bitmap1 = ZXingUtils.createQRImage(downUrl, 200, 200);
+        Bitmap bitmap2 = ZXingUtils.createQRImage(downUrl, 200, 200);
+        Bitmap bitmap4 = ZXingUtils.createQRImage(downUrl, 200, 200);
+        Bitmap bitmap3 = ZXingUtils.mixtureBitmap(bitmap1, bitmap2, new PointF(200, 0));
+        Bitmap bitmap = ZXingUtils.mixtureBitmap(bitmap4, bitmap3, new PointF(180, 0));
 //        Bitmap bitmap = ZXingUtils.createQRImage(downUrl, 250, 250);
         PrintPic printPic = PrintPic.getInstance();
         printPic.init(bitmap);//载入图片
